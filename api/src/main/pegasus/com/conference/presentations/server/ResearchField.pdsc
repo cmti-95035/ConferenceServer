@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "name": "ResearchField",
+  "namespace": "com.conference.presentations.server",
+  "doc": "Represents a research field",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int",
+      "doc": "The user's id",
+          "optional": false
+    },
+    {
+      "name": "fieldName",
+      "type": "string",
+      "doc": "The research field name",
+	  "optional": false
+    }
+  ]
+}

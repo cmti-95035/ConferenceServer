@@ -1,0 +1,56 @@
+{
+  "type": "record",
+  "name": "Conference",
+  "namespace": "com.conference.presentations.server",
+  "doc": "Represents a conference3",
+  "fields": [
+    {
+      "name": "conferenceId",
+      "type": "int",
+      "doc": "The conference's id",
+          "optional": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "doc": "The conference's name",
+	  "optional": false
+    },
+	{
+      "name": "venue",
+      "type": "string",
+      "doc": "The conference's venue",
+	  "optional": false
+    },
+	{
+      "name": "conferenceTime",
+      "type": "string",
+      "doc": "The conference's time",
+	  "optional": false
+    },
+	{
+      "name": "organizer",
+      "type": "string",
+      "doc": "The conference's organizer",
+	  "optional": true
+    },
+    {
+      "name": "fields",
+      "type": { "type" : "array", "items" : "int" },
+      "doc": "The research fields this conference belongs to",
+      "optional": false
+    },
+	{
+      "name": "website",
+      "type": "string",
+      "doc": "The conference's website",
+	  "optional": true
+    },
+	{
+      "name": "emails",
+      "type": "string",
+      "doc": "A list of comma separated emails to be sent to for this given conference",
+	  "optional": true
+    }
+  ]
+}

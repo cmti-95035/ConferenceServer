@@ -1,0 +1,44 @@
+{
+  "type": "record",
+  "name": "Presentation",
+  "namespace": "com.conference.presentations.server",
+  "doc": "Represents a presentation",
+  "fields": [
+    {
+      "name": "presentationId",
+      "type": "int",
+      "doc": "The presentation's id",
+          "optional": false
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "doc": "The presentation's title",
+	  "optional": false
+    },
+	{
+      "name": "abs",
+      "type": "string",
+      "doc": "The presentation's abstract",
+	  "optional": false
+    },
+	{
+      "name": "fileName",
+      "type": "string",
+      "doc": "The presentation's file name",
+	  "optional": false
+    },
+	{
+      "name": "conference",
+      "type": "Conference",
+      "doc": "The conference that this presentation was submitted",
+	  "optional": false
+    },
+	{
+      "name": "user",
+      "type": "User",
+      "doc": "The user who uploaded this presentation",
+	  "optional": false
+    }
+  ]
+}

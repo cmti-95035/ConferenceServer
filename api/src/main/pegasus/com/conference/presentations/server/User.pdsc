@@ -1,0 +1,62 @@
+{
+  "type": "record",
+  "name": "User",
+  "namespace": "com.conference.presentations.server",
+  "doc": "Represents a registered user",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int",
+      "doc": "The user's id",
+          "optional": false
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "doc": "The user's e-mail",
+	  "optional": false
+    },
+	{
+      "name": "password",
+      "type": "string",
+      "doc": "The user's password",
+	  "optional": false
+    },
+	{
+      "name": "name",
+      "type": "string",
+      "doc": "The user's name",
+	  "optional": false
+    },
+	{
+      "name": "phoneNumber",
+      "type": "string",
+      "doc": "The user's phone number",
+	  "optional": true
+    },
+	{
+      "name": "address",
+      "type": "string",
+      "doc": "The user's home address",
+	  "optional": true
+    },
+        {
+      "name": "fields",
+      "type": { "type" : "array", "items" : "int" },
+      "doc": "The user's home address",
+          "optional": true
+    },
+	{
+      "name": "gender",
+      "type": "string",
+      "doc": "The user's gender",
+	  "optional": true
+    },
+	{
+      "name": "country",
+      "type": "string",
+      "doc": "The user's country",
+	  "optional": true
+    }
+  ]
+}

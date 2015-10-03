@@ -30,7 +30,7 @@ dependencies {
 
 task JettyRunWar(type: JavaExec) {
   main = "org.mortbay.jetty.runner.Runner"
-  args = [war.archivePath]
+  args = ['--port', '7777', war.archivePath]
   //jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
   classpath configurations.jetty8
 }

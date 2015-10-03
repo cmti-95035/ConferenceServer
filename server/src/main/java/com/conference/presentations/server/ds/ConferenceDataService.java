@@ -2,17 +2,24 @@ package com.conference.presentations.server.ds;
 
 import com.conference.presentations.server.Conference;
 import com.conference.presentations.server.Presentation;
+import com.conference.presentations.server.ResearchField;
 import com.conference.presentations.server.User;
+
+import java.util.List;
 
 
 public interface ConferenceDataService {
 
+	//research fields
+	public List<ResearchField> getAllResearchFields();
+
 	//user
 	public User getUser(Integer userId);
 	public User getUserFromEmail(String email);
-	public boolean addUser(User entry);
+	public Integer addUser(User entry);
 	public boolean deleteUser(Integer userId);
 	public boolean updateUser(User entry, Integer userId);
+	public List<User> getAllUsers();
 	
 	// conference
 	public Conference getConference(Integer conferenceId);

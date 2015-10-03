@@ -4,7 +4,7 @@
       <Property name="log-path">/tmp/</Property>
    </Properties>
    <Appenders>
-      <RollingFile name="RollingFile" fileName="${log-path}/povi.log" filePattern="${log-path}/povi-%d{yyyy-MM-dd}-%i.log">
+      <RollingFile name="RollingFile" fileName="${log-path}/conference.log" filePattern="${log-path}/conference-%d{yyyy-MM-dd}-%i.log">
          <PatternLayout>
             <pattern>%d{MM/dd/yyyy HH:mm:ss,SSS}- %c{1}: %m%n</pattern>
          </PatternLayout>

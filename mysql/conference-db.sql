@@ -20,6 +20,7 @@ CREATE TABLE user (
   `fields` VARCHAR(30),
   `address` VARCHAR(200),
   `COUNTRY` VARCHAR(20),
+  `lastupdatetime` bigint,
   PRIMARY KEY(`userId`)
 )AUTO_INCREMENT=1000
 ENGINE = InnoDB
@@ -35,6 +36,7 @@ CREATE TABLE conference (
   `organizer` VARCHAR(200),
   `website` VARCHAR(500),
   `emails` VARCHAR(2000),
+  `lastupdatetime` bigint,
   PRIMARY KEY(`conferenceId`)
 )AUTO_INCREMENT=1000
 ENGINE = InnoDB
@@ -48,6 +50,7 @@ CREATE TABLE presentation (
   `authors` VARCHAR(200),
   `fileName` VARCHAR(200),
   `abs` VARCHAR(2000),
+  `lastupdatetime` bigint,
   PRIMARY KEY(`presentationId`),
   CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_conferenceId` FOREIGN KEY (`conferenceId`) REFERENCES `conference` (`conferenceId`) ON DELETE CASCADE ON UPDATE CASCADE

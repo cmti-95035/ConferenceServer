@@ -2,9 +2,12 @@ package com.conference.presentations.server.ds;
 
 import com.conference.presentations.server.Conference;
 import com.conference.presentations.server.Presentation;
+import com.conference.presentations.server.ResearchField;
 import com.conference.presentations.server.User;
 import com.conference.presentations.server.db.ConferenceDB;
 import com.conference.presentations.server.db.mysql.ConferenceDBImpl;
+
+import java.util.List;
 
 public class ConferenceDataServiceImpl implements ConferenceDataService {
 
@@ -35,7 +38,7 @@ public class ConferenceDataServiceImpl implements ConferenceDataService {
 	}
 
 	@Override
-	public boolean addUser(User entry) {
+	public Integer addUser(User entry) {
 		return db.addUser(entry);
 	}
 
@@ -87,5 +90,15 @@ public class ConferenceDataServiceImpl implements ConferenceDataService {
 	@Override
 	public boolean updatePresentation(Presentation entry, Integer presentationId) {
 		return db.updatePresentation(entry, presentationId);
+	}
+
+	@Override
+	public List<ResearchField> getAllResearchFields() {
+		return db.getAllResearchFields();
+	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return db.getAllUsers();
 	}
 }

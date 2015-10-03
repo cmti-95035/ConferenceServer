@@ -112,8 +112,9 @@ public class ServerUtils {
         // represents a valid session
         if (headerMap == null || !headerMap.containsKey(CONFERENCE_AUTHORIZATION_HEADER)) {
             _log.warn("missing " + CONFERENCE_AUTHORIZATION_HEADER + " in the headers for " + scenario );
-            throw new RestLiServiceException(HttpStatus.S_400_BAD_REQUEST,
-                    CONFERENCE_AUTHORIZATION_HEADER + " header must present in request!");
+            return null;
+//            throw new RestLiServiceException(HttpStatus.S_400_BAD_REQUEST,
+//                    CONFERENCE_AUTHORIZATION_HEADER + " header must present in request!");
         }
         else {
             String token = headerMap.get(CONFERENCE_AUTHORIZATION_HEADER);

@@ -8,7 +8,7 @@
 
   <!-- servlet definitions -->
   <servlet>
-    <servlet-name>PoviServlet</servlet-name>
+    <servlet-name>ConferenceServlet</servlet-name>
     <servlet-class>com.linkedin.restli.server.RestliServlet</servlet-class>
     <async-supported>true</async-supported>
     <init-param>

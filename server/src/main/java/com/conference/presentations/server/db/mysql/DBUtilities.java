@@ -6,8 +6,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class DBUtilities {
@@ -15,6 +17,7 @@ public class DBUtilities {
     private static int port = 3306;        // default port for mysql
     private static final String SEPARATOR = ":";
     private static final String COMMA_DELIMITER = ",";
+    private static final String DASH_DELIMITER = "-";
 
     /**
      * create a DB connection to mysql
@@ -81,5 +84,30 @@ public class DBUtilities {
             sb.append(list.get(list.size() - 1));
         }
         return sb.toString();
+    }
+
+    public static String joinDates(Date startDate, Date endDate){
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        return sdf.format(startDate) + "-" + sdf.format(endDate);
+    }
+
+    public static Date[] separateDates(String joinedDates){
+        if(joinedDates == null || joinedDates.isEmpty())
+            return null;
+
+        String[] parts = joinedDates.split(DASH_DELIMITER);
+        if(parts.length != 2)
+            return null;
+
+        Date[] dates = new Date[2];
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            dates[0] = sdf.parse(parts[0]);
+            dates[1] = sdf.parse(parts[1]);
+        }catch (Exception ex){
+            return null;
+        }
+
+        return dates;
     }
 }

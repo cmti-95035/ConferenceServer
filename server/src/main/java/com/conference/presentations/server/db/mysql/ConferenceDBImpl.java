@@ -69,7 +69,7 @@ public class ConferenceDBImpl implements ConferenceDB {
             _log.error(methodName + " SQLState: " + ex.getSQLState());
             _log.error(methodName + " VendorError: " + ex.getErrorCode());
         } catch (Exception ex) {
-            _log.error(methodName + "  getUser Encountered exception: " + ex.getMessage());
+            _log.error(methodName + "  Encountered exception: " + ex.getMessage());
             DBUtilities.printStackTrace(_log, ex.getStackTrace());
         } finally {
             try {
@@ -116,7 +116,7 @@ public class ConferenceDBImpl implements ConferenceDB {
             _log.error(methodName + " SQLState: " + ex.getSQLState());
             _log.error(methodName + " VendorError: " + ex.getErrorCode());
         } catch (Exception ex) {
-            _log.error(methodName + "  getUser Encountered exception: " + ex.getMessage());
+            _log.error(methodName + "  Encountered exception: " + ex.getMessage());
             DBUtilities.printStackTrace(_log, ex.getStackTrace());
         } finally {
             try {
@@ -296,7 +296,7 @@ public class ConferenceDBImpl implements ConferenceDB {
             _log.error(methodName + " SQLState: " + ex.getSQLState());
             _log.error(methodName + " VendorError: " + ex.getErrorCode());
         } catch (Exception ex) {
-            _log.error(methodName + "  getUser Encountered exception: " + ex.getMessage());
+            _log.error(methodName + "  Encountered exception: " + ex.getMessage());
             DBUtilities.printStackTrace(_log, ex.getStackTrace());
         } finally {
             try {
@@ -344,7 +344,7 @@ public class ConferenceDBImpl implements ConferenceDB {
             _log.error(methodName + " SQLState: " + ex.getSQLState());
             _log.error(methodName + " VendorError: " + ex.getErrorCode());
         } catch (Exception ex) {
-            _log.error(methodName + "  getUser Encountered exception: " + ex.getMessage());
+            _log.error(methodName + "  Encountered exception: " + ex.getMessage());
             DBUtilities.printStackTrace(_log, ex.getStackTrace());
         } finally {
             try {
@@ -363,22 +363,237 @@ public class ConferenceDBImpl implements ConferenceDB {
 
     @Override
     public Conference getConference(Integer conferenceId) {
+        PreparedStatement selectConference = null;
+        String methodName = "getConference";
+
+        String selectString = "select * from conference where conferenceId=?;";
+
+        try {
+            selectConference = conn.prepareStatement(selectString);
+
+            selectConference.setInt(1, conferenceId);
+            ResultSet rs = selectConference.executeQuery();
+            if (rs.first()) {
+                Conference conference = new Conference();
+                conference.setConferenceId(rs.getInt("conferenceId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setVenue(rs.getString("venue"))
+                        .setConferenceTime(DBUtilities.joinDates(rs.getDate("startTime"), rs.getDate("endTime")))
+                        .setOrganizer(rs.getString("organizer"), SetMode.IGNORE_NULL)
+                        .setWebsite(rs.getString("website"), SetMode.IGNORE_NULL)
+                        .setFields(new IntegerArray(DBUtilities.convertDelimitedStringToList(_log, rs.getString("fields"))))
+                        .setEmails(rs.getString("emails"), SetMode.IGNORE_NULL);
+
+                return conference;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectConference != null) {
+                    selectConference.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return null;
     }
 
     @Override
-    public boolean addConference(Conference entry) {
-        return false;
+    public Integer addConference(Conference entry) {
+        PreparedStatement insertConference = null;
+        String methodName = "addConference";
+
+        String insertString = "insert into conference (name, venue, startTime, endTime, fields, organizer, website, lastupdatetime, emails) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            insertConference = conn.prepareStatement(insertString);
+
+            Date[] dates = DBUtilities.separateDates(entry.getConferenceTime());
+            insertConference.setNString(1, entry.getName());
+            insertConference.setNString(2, entry.getVenue());
+            insertConference.setDate(3, new java.sql.Date(dates[0].getTime()));
+            insertConference.setDate(4, new java.sql.Date(dates[1].getTime()));
+            insertConference.setNString(5, DBUtilities.convertListToDelimitedString(entry.getFields()));
+            insertConference.setNString(6, entry.getOrganizer());
+            insertConference.setNString(7, entry.getWebsite(GetMode.NULL));
+            insertConference.setLong(8, new Date().getTime());
+            insertConference.setNString(9, entry.getEmails());
+            insertConference.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_LAST_ID);
+            ResultSet rs = selectLastId.executeQuery();
+            while (rs.next()) {
+                Integer conferenceId = rs.getInt(1);
+                return conferenceId;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  addUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (insertConference != null) {
+                    insertConference.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return null;
     }
 
     @Override
     public boolean deleteConference(Integer conferenceId) {
+        PreparedStatement deleteConference = null;
+        String methodName = "deleteUser";
+
+        String deleteString = "delete from conference where conferenceId = ?";
+
+        try {
+            deleteConference = conn.prepareStatement(deleteString);
+
+            deleteConference.setInt(1, conferenceId);
+            deleteConference.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_ROW_COUNT);
+            ResultSet rs = selectLastId.executeQuery();
+            if (rs.first() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  deleteUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (deleteConference != null) {
+                    deleteConference.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return false;
     }
 
     @Override
     public boolean updateConference(Conference entry, Integer conferenceId) {
+        PreparedStatement updateConference = null;
+        String methodName = "addUser";
+
+        String insertString = "update conference set name=?, venue=?, startTime=?, endTime=?, fields=?, organizer=?, website=?, lastupdatetime=?, emails=? where conferenceId=?;";
+
+        try {
+            updateConference = conn.prepareStatement(insertString);
+
+            Date[] dates = DBUtilities.separateDates(entry.getConferenceTime());
+            updateConference.setNString(1, entry.getName());
+            updateConference.setNString(2, entry.getVenue());
+            updateConference.setDate(3, new java.sql.Date(dates[0].getTime()));
+            updateConference.setDate(4, new java.sql.Date(dates[1].getTime()));
+
+            updateConference.setNString(5, DBUtilities.convertListToDelimitedString(entry.getFields()));
+            updateConference.setNString(6, entry.getOrganizer());
+            updateConference.setNString(7, entry.getWebsite(GetMode.NULL));
+            updateConference.setLong(8, new Date().getTime());
+            updateConference.setNString(9, entry.getEmails());
+            updateConference.setInt(10, conferenceId);
+            updateConference.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_ROW_COUNT);
+            ResultSet rs = selectLastId.executeQuery();
+            if (rs.first() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  addUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (updateConference != null) {
+                    updateConference.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return false;
+    }
+
+    @Override
+    public List<Conference> getAllConferences() {
+        PreparedStatement selectConference = null;
+        String methodName = "getConference";
+
+        List<Conference> conferences = new ArrayList<>();
+        String selectString = "select * from conference order by startTime;";
+
+        try {
+            selectConference = conn.prepareStatement(selectString);
+
+            ResultSet rs = selectConference.executeQuery();
+            while (rs.next()) {
+                Conference conference = new Conference();
+                conference.setConferenceId(rs.getInt("conferenceId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setVenue(rs.getString("venue"))
+                        .setConferenceTime(DBUtilities.joinDates(rs.getDate("startTime"), rs.getDate("endTime")))
+                        .setOrganizer(rs.getString("organizer"), SetMode.IGNORE_NULL)
+                        .setWebsite(rs.getString("website"), SetMode.IGNORE_NULL)
+                        .setFields(new IntegerArray(DBUtilities.convertDelimitedStringToList(_log, rs.getString("fields"))))
+                        .setEmails(rs.getString("emails"), SetMode.IGNORE_NULL);
+
+                conferences.add(conference);
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectConference != null) {
+                    selectConference.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return conferences;
     }
 
     @Override
@@ -387,8 +602,8 @@ public class ConferenceDBImpl implements ConferenceDB {
     }
 
     @Override
-    public boolean addPresentation(Presentation entry) {
-        return false;
+    public Integer addPresentation(Presentation entry) {
+        return null;
     }
 
     @Override
@@ -399,5 +614,11 @@ public class ConferenceDBImpl implements ConferenceDB {
     @Override
     public boolean updatePresentation(Presentation entry, Integer presentationId) {
         return false;
+    }
+
+
+    @Override
+    public List<Presentation> getAllPresentations() {
+        return null;
     }
 }

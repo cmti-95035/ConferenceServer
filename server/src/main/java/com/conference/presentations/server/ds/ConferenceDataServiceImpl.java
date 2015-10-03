@@ -58,7 +58,7 @@ public class ConferenceDataServiceImpl implements ConferenceDataService {
 	}
 
 	@Override
-	public boolean addConference(Conference entry) {
+	public Integer addConference(Conference entry) {
 		return db.addConference(entry);
 	}
 
@@ -78,7 +78,7 @@ public class ConferenceDataServiceImpl implements ConferenceDataService {
 	}
 
 	@Override
-	public boolean addPresentation(Presentation entry) {
+	public Integer addPresentation(Presentation entry) {
 		return db.addPresentation(entry);
 	}
 
@@ -100,5 +100,15 @@ public class ConferenceDataServiceImpl implements ConferenceDataService {
 	@Override
 	public List<User> getAllUsers() {
 		return db.getAllUsers();
+	}
+
+	@Override
+	public List<Conference> getAllConferences() {
+		return db.getAllConferences();
+	}
+
+	@Override
+	public List<Presentation> getAllPresentations() {
+		return db.getAllPresentations();
 	}
 }

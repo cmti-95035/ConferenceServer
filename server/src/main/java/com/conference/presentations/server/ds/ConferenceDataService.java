@@ -23,14 +23,16 @@ public interface ConferenceDataService {
 	
 	// conference
 	public Conference getConference(Integer conferenceId);
-	public boolean addConference(Conference entry);
+	public Integer addConference(Conference entry);
 	public boolean deleteConference(Integer conferenceId);
 	public boolean updateConference(Conference entry, Integer conferenceId);
+	public List<Conference> getAllConferences();
 
 	// presentation
 	public Presentation getPresentation(Integer presentationId);
-	public boolean addPresentation(Presentation entry);
+	public Integer addPresentation(Presentation entry);
 	public boolean deletePresentation(Integer presentationId);
 	public boolean updatePresentation(Presentation entry, Integer presentationId);
+	public List<Presentation> getAllPresentations();
 
 }

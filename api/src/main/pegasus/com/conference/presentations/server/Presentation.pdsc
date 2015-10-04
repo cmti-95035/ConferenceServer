@@ -16,6 +16,12 @@
       "doc": "The presentation's title",
 	  "optional": false
     },
+    {
+      "name": "authors",
+      "type": "string",
+      "doc": "The presentation's authors",
+	  "optional": false
+    },
 	{
       "name": "abs",
       "type": "string",
@@ -27,6 +33,12 @@
       "type": "string",
       "doc": "The presentation's file name",
 	  "optional": false
+    },
+	{
+      "name": "isPrivate",
+      "type": "boolean",
+      "doc": "Whether this presentation is private",
+	  "optional": true
     },
 	{
       "name": "conference",

@@ -1,0 +1,40 @@
+{
+  "name" : "user",
+  "namespace" : "com.conference.presentations.server",
+  "path" : "/user",
+  "schema" : "com.conference.presentations.server.User",
+  "doc" : "generated from: com.conference.presentations.server.impl.UserResource",
+  "collection" : {
+    "identifier" : {
+      "name" : "userId",
+      "type" : "int"
+    },
+    "supports" : [ "create", "delete", "get", "update" ],
+    "methods" : [ {
+      "method" : "create"
+    }, {
+      "method" : "get"
+    }, {
+      "method" : "update"
+    }, {
+      "method" : "delete"
+    } ],
+    "actions" : [ {
+      "name" : "getAllResearchFields",
+      "returns" : "{ \"type\" : \"array\", \"items\" : \"com.conference.presentations.server.ResearchField\" }"
+    }, {
+      "name" : "getAllUsers",
+      "returns" : "{ \"type\" : \"array\", \"items\" : \"com.conference.presentations.server.User\" }"
+    }, {
+      "name" : "getUserFromEmail",
+      "parameters" : [ {
+        "name" : "email",
+        "type" : "string"
+      } ],
+      "returns" : "com.conference.presentations.server.User"
+    } ],
+    "entity" : {
+      "path" : "/user/{userId}"
+    }
+  }
+}

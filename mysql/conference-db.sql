@@ -51,6 +51,7 @@ CREATE TABLE presentation (
   `fileName` VARCHAR(200),
   `abs` VARCHAR(2000),
   `lastupdatetime` bigint,
+  `isPrivate` tinyint(1),
   PRIMARY KEY(`presentationId`),
   CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_conferenceId` FOREIGN KEY (`conferenceId`) REFERENCES `conference` (`conferenceId`) ON DELETE CASCADE ON UPDATE CASCADE

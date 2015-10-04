@@ -461,7 +461,7 @@ public class ConferenceDBImpl implements ConferenceDB {
     @Override
     public boolean deleteConference(Integer conferenceId) {
         PreparedStatement deleteConference = null;
-        String methodName = "deleteUser";
+        String methodName = "deleteConference";
 
         String deleteString = "delete from conference where conferenceId = ?";
 
@@ -501,7 +501,7 @@ public class ConferenceDBImpl implements ConferenceDB {
     @Override
     public boolean updateConference(Conference entry, Integer conferenceId) {
         PreparedStatement updateConference = null;
-        String methodName = "addUser";
+        String methodName = "updateConference";
 
         String insertString = "update conference set name=?, venue=?, startTime=?, endTime=?, fields=?, organizer=?, website=?, lastupdatetime=?, emails=? where conferenceId=?;";
 
@@ -552,7 +552,7 @@ public class ConferenceDBImpl implements ConferenceDB {
     @Override
     public List<Conference> getAllConferences() {
         PreparedStatement selectConference = null;
-        String methodName = "getConference";
+        String methodName = "getAllConferences";
 
         List<Conference> conferences = new ArrayList<>();
         String selectString = "select * from conference order by startTime;";
@@ -598,27 +598,272 @@ public class ConferenceDBImpl implements ConferenceDB {
 
     @Override
     public Presentation getPresentation(Integer presentationId) {
+        PreparedStatement selectPresentation = null;
+        String methodName = "getPresentation";
+
+        String selectString = "select * from presentation p, conference c, user u where p.conferenceId = c.conferenceId and p.userId = u.userId and p.presentationId=?;";
+
+        try {
+            selectPresentation = conn.prepareStatement(selectString);
+
+            selectPresentation.setInt(1, presentationId);
+            ResultSet rs = selectPresentation.executeQuery();
+            if (rs.first()) {
+                Presentation presentation = new Presentation();
+                Conference conference = new Conference();
+                conference.setConferenceId(rs.getInt("conferenceId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setVenue(rs.getString("venue"))
+                        .setConferenceTime(DBUtilities.joinDates(rs.getDate("startTime"), rs.getDate("endTime")))
+                        .setOrganizer(rs.getString("organizer"), SetMode.IGNORE_NULL)
+                        .setWebsite(rs.getString("website"), SetMode.IGNORE_NULL)
+                        .setFields(new IntegerArray(DBUtilities.convertDelimitedStringToList(_log, rs.getString("fields"))))
+                        .setEmails(rs.getString("emails"), SetMode.IGNORE_NULL);
+
+                User user = new User();
+                user.setId(rs.getInt("userId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setEmail(rs.getString("email"))
+                        .setPhoneNumber(rs.getString("phoneNumber"), SetMode.IGNORE_NULL)
+                        .setAddress(rs.getString("address"), SetMode.IGNORE_NULL)
+                        .setPassword(SymmetricEncryptionUtility.decrypt(rs.getString("hash")))
+                        .setFields(new IntegerArray(DBUtilities.convertDelimitedStringToList(_log, rs.getString("fields"))))
+                        .setCountry(rs.getString("country"), SetMode.IGNORE_NULL);
+
+                presentation.setPresentationId(rs.getInt("presentationId"))
+                        .setTitle(rs.getString("title"), SetMode.IGNORE_NULL)
+                        .setFileName(rs.getString("fileName"), SetMode.IGNORE_NULL)
+                        .setAbs(rs.getString("abs"))
+                        .setAuthors(rs.getString("authors"))
+                        .setIsPrivate(rs.getBoolean("isPrivate"), SetMode.IGNORE_NULL)
+                        .setConference(conference)
+                        .setUser(user);
+
+                return presentation;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectPresentation != null) {
+                    selectPresentation.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return null;
     }
 
     @Override
     public Integer addPresentation(Presentation entry) {
+        PreparedStatement insertPresentation = null;
+        String methodName = "addPresentation";
+
+        String insertString = "insert into presentation (userId, conferenceId, title, authors, fileName, abs, isPrivate, lastupdatetime) values (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            insertPresentation = conn.prepareStatement(insertString);
+            
+            insertPresentation.setInt(1, entry.getUser().getId());
+            insertPresentation.setInt(2, entry.getConference().getConferenceId());
+            insertPresentation.setNString(3, entry.getTitle());
+            insertPresentation.setNString(4, entry.getAuthors());
+            insertPresentation.setNString(5, entry.getFileName(GetMode.NULL));
+            insertPresentation.setNString(6, entry.getAbs());
+            insertPresentation.setBoolean(7, entry.hasIsPrivate() ? entry.isIsPrivate() : false);
+            insertPresentation.setLong(8, new Date().getTime());
+            insertPresentation.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_LAST_ID);
+            ResultSet rs = selectLastId.executeQuery();
+            while (rs.next()) {
+                Integer conferenceId = rs.getInt(1);
+                return conferenceId;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  addUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (insertPresentation != null) {
+                    insertPresentation.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return null;
     }
 
     @Override
     public boolean deletePresentation(Integer presentationId) {
+        PreparedStatement deletePresentation = null;
+        String methodName = "deletePresentation";
+
+        String deleteString = "delete from presentation where presentationId = ?";
+
+        try {
+            deletePresentation = conn.prepareStatement(deleteString);
+
+            deletePresentation.setInt(1, presentationId);
+            deletePresentation.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_ROW_COUNT);
+            ResultSet rs = selectLastId.executeQuery();
+            if (rs.first() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  deleteUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (deletePresentation != null) {
+                    deletePresentation.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return false;
     }
 
     @Override
     public boolean updatePresentation(Presentation entry, Integer presentationId) {
+        PreparedStatement updatePresentation = null;
+        String methodName = "updatePresentation";
+
+        String updateString = "update into presentation userId=?, conferenceId=?, title=?, authors=?, fileName=?, abs=?, isPrivate=?, lastupdatetime=? where presentationId=?;";
+
+        try {
+            updatePresentation = conn.prepareStatement(updateString);
+
+            updatePresentation.setInt(1, entry.getUser().getId());
+            updatePresentation.setInt(2, entry.getConference().getConferenceId());
+            updatePresentation.setNString(3, entry.getTitle());
+            updatePresentation.setNString(4, entry.getAuthors());
+            updatePresentation.setNString(5, entry.getFileName(GetMode.NULL));
+            updatePresentation.setNString(6, entry.getAbs());
+            updatePresentation.setBoolean(7, entry.hasIsPrivate() ? entry.isIsPrivate() : false);
+            updatePresentation.setLong(8, new Date().getTime());
+            updatePresentation.setInt(9, presentationId);
+            updatePresentation.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_ROW_COUNT);
+            ResultSet rs = selectLastId.executeQuery();
+            if (rs.first() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  addUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (updatePresentation != null) {
+                    updatePresentation.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
         return false;
     }
 
 
     @Override
     public List<Presentation> getAllPresentations() {
-        return null;
+        PreparedStatement selectPresentation = null;
+        String methodName = "getAllPresentations";
+
+        List<Presentation> presentations = new ArrayList<>();
+        String selectString = "select * from presentation p, conference c, user u where p.conferenceId = c.conferenceId and p.userId = u.userId order by c.startTime desc;";
+
+        try {
+            selectPresentation = conn.prepareStatement(selectString);
+
+            ResultSet rs = selectPresentation.executeQuery();
+            while(rs.next()) {
+                Presentation presentation = new Presentation();
+                Conference conference = new Conference();
+                conference.setConferenceId(rs.getInt("conferenceId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setVenue(rs.getString("venue"))
+                        .setConferenceTime(DBUtilities.joinDates(rs.getDate("startTime"), rs.getDate("endTime")))
+                        .setOrganizer(rs.getString("organizer"), SetMode.IGNORE_NULL)
+                        .setWebsite(rs.getString("website"), SetMode.IGNORE_NULL)
+                        .setFields(new IntegerArray(DBUtilities.convertDelimitedStringToList(_log, rs.getString("fields"))))
+                        .setEmails(rs.getString("emails"), SetMode.IGNORE_NULL);
+
+                User user = new User();
+                user.setId(rs.getInt("userId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setEmail(rs.getString("email"))
+                        .setPhoneNumber(rs.getString("phoneNumber"), SetMode.IGNORE_NULL)
+                        .setAddress(rs.getString("address"), SetMode.IGNORE_NULL)
+                        .setPassword(SymmetricEncryptionUtility.decrypt(rs.getString("hash")))
+                        .setFields(new IntegerArray(DBUtilities.convertDelimitedStringToList(_log, rs.getString("fields"))))
+                        .setCountry(rs.getString("country"), SetMode.IGNORE_NULL);
+
+                presentation.setPresentationId(rs.getInt("presentationId"))
+                        .setTitle(rs.getString("title"), SetMode.IGNORE_NULL)
+                        .setFileName(rs.getString("fileName"), SetMode.IGNORE_NULL)
+                        .setAbs(rs.getString("abs"))
+                        .setAuthors(rs.getString("authors"))
+                        .setIsPrivate(rs.getBoolean("isPrivate"), SetMode.IGNORE_NULL)
+                        .setConference(conference)
+                        .setUser(user);
+
+                presentations.add(presentation);
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectPresentation != null) {
+                    selectPresentation.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return presentations;
     }
 }

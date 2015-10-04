@@ -1,0 +1,30 @@
+{
+  "name" : "presentation",
+  "namespace" : "com.conference.presentations.server",
+  "path" : "/presentation",
+  "schema" : "com.conference.presentations.server.Presentation",
+  "doc" : "generated from: com.conference.presentations.server.impl.PresentationResource",
+  "collection" : {
+    "identifier" : {
+      "name" : "presentationId",
+      "type" : "int"
+    },
+    "supports" : [ "create", "delete", "get", "update" ],
+    "methods" : [ {
+      "method" : "create"
+    }, {
+      "method" : "get"
+    }, {
+      "method" : "update"
+    }, {
+      "method" : "delete"
+    } ],
+    "actions" : [ {
+      "name" : "getAllPresentations",
+      "returns" : "{ \"type\" : \"array\", \"items\" : \"com.conference.presentations.server.Presentation\" }"
+    } ],
+    "entity" : {
+      "path" : "/presentation/{presentationId}"
+    }
+  }
+}

@@ -112,6 +112,31 @@ public class RestLiClient {
         for(Conference c : conferenceArray){
             System.out.println("getAllConferences returns : " + c);
         }
+
+        Presentation presentation = new Presentation()
+                .setAbs("first presentation")
+                .setAuthors("abc;xyz")
+                .setConference(newConference)
+                .setTitle("best practice")
+                .setIsPrivate(false)
+                .setUser(user);
+        
+        Integer presentationId = createPresentation(restClient, presentation);
+        
+        presentation = getPresentation(restClient, presentationId);
+        System.out.println("\ngetPresentation returns: " + presentation);
+        
+        presentation.setFileName("report.pdf");
+        updatePresentation(restClient, presentation, presentationId);
+        
+        Presentation newPresentation = getPresentation(restClient, presentationId);
+        System.out.println("\nafter update it returns: " + newPresentation);
+
+        PresentationArray presentationArray = getAllPresentations(restClient);
+        for(Presentation p : presentationArray){
+            System.out.println("getAllPresentations returns : " + p);
+        }
+
         restClient.shutdown(new FutureCallback<None>());
         http.shutdown(new FutureCallback<None>());
     }

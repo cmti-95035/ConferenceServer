@@ -756,7 +756,7 @@ public class ConferenceDBImpl implements ConferenceDB {
         PreparedStatement updatePresentation = null;
         String methodName = "updatePresentation";
 
-        String updateString = "update into presentation userId=?, conferenceId=?, title=?, authors=?, fileName=?, abs=?, isPrivate=?, lastupdatetime=? where presentationId=?;";
+        String updateString = "update presentation set userId=?, conferenceId=?, title=?, authors=?, fileName=?, abs=?, isPrivate=?, lastupdatetime=? where presentationId=?;";
 
         try {
             updatePresentation = conn.prepareStatement(updateString);

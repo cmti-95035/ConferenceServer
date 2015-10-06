@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "name": "IncomingSMS",
+  "namespace": "com.conference.presentations.server",
+  "doc": "Represents a presentation",
+  "fields": [
+    {
+      "name": "smsId",
+      "type": "int",
+      "doc": "The request's id",
+          "optional": false
+    },
+    {
+      "name": "values",
+      "type": "string",
+      "doc": "The requester's value",
+	  "optional": false
+    }
+  ]
+}

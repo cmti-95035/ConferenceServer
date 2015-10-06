@@ -1,0 +1,56 @@
+{
+  "type": "record",
+  "name": "UnicefRequest",
+  "namespace": "com.conference.presentations.server",
+  "doc": "Represents a presentation",
+  "fields": [
+    {
+      "name": "requestId",
+      "type": "int",
+      "doc": "The request's id",
+          "optional": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "doc": "The requester's name",
+	  "optional": false
+    },
+    {
+      "name": "identifier",
+      "type": "string",
+      "doc": "The requester's identifier, which can be a phone number or a chatId from a messaging app",
+	  "optional": false
+    },
+    {
+      "name": "detail",
+      "type": "string",
+      "doc": "The detailed request",
+	  "optional": false
+    },
+	{
+      "name": "latitude",
+      "type": "double",
+      "doc": "The latitute of where the request comes in",
+	  "optional": false
+    },
+	{
+      "name": "longitute",
+      "type": "double",
+      "doc": "The longitute of where the request comes in",
+	  "optional": false
+    },
+	{
+      "name": "lastUpdated",
+      "type": "string",
+      "doc": "The timestamp of the last updated",
+	  "optional": false
+    },
+	{
+      "name": "status",
+      "type": "RequestState",
+      "doc": "The status of the request",
+	  "optional": false
+    }
+  ]
+}

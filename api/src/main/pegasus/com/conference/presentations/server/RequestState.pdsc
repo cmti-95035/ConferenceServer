@@ -1,0 +1,7 @@
+{
+  "type" : "enum",
+  "name" : "RequestState",
+  "namespace" : "com.conference.presentations.server",
+  "doc" : "enum of days",
+  "symbols" : [ "INCOMING", "INPROGRESS", "COMPLETE"]
+}

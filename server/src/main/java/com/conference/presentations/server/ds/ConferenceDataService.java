@@ -1,9 +1,6 @@
 package com.conference.presentations.server.ds;
 
-import com.conference.presentations.server.Conference;
-import com.conference.presentations.server.Presentation;
-import com.conference.presentations.server.ResearchField;
-import com.conference.presentations.server.User;
+import com.conference.presentations.server.*;
 
 import java.util.List;
 
@@ -35,4 +32,17 @@ public interface ConferenceDataService {
 	public boolean updatePresentation(Presentation entry, Integer presentationId);
 	public List<Presentation> getAllPresentations();
 
+	// unicef request
+	public UnicefRequest getUnicefRequest(Integer unicefRequestId);
+	public Integer addUnicefRequest(UnicefRequest entry);
+	public boolean deleteUnicefRequest(Integer unicefRequestId);
+	public boolean updateUnicefRequest(UnicefRequest entry, Integer unicefRequestId);
+	public List<UnicefRequest> getAllUnicefRequests();
+	public List<UnicefRequest> getAllUnicefIncomingRequests();
+	public List<UnicefRequest> getAllUnicefInprogressRequests();
+	public List<UnicefRequest> getAllUnicefCompletedRequests();
+	
+	// incoming sms
+	public IncomingSMS getIncomingSMS(Integer smsId);
+	public Integer addIncomingSMS(IncomingSMS entry);
 }

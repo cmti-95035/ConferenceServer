@@ -1,9 +1,6 @@
 package com.conference.presentations.server.ds;
 
-import com.conference.presentations.server.Conference;
-import com.conference.presentations.server.Presentation;
-import com.conference.presentations.server.ResearchField;
-import com.conference.presentations.server.User;
+import com.conference.presentations.server.*;
 import com.conference.presentations.server.db.ConferenceDB;
 import com.conference.presentations.server.db.mysql.ConferenceDBImpl;
 
@@ -110,5 +107,55 @@ public class ConferenceDataServiceImpl implements ConferenceDataService {
 	@Override
 	public List<Presentation> getAllPresentations() {
 		return db.getAllPresentations();
+	}
+
+	@Override
+	public UnicefRequest getUnicefRequest(Integer unicefRequestId) {
+		return db.getUnicefRequest(unicefRequestId);
+	}
+
+	@Override
+	public Integer addUnicefRequest(UnicefRequest entry) {
+		return db.addUnicefRequest(entry);
+	}
+
+	@Override
+	public boolean deleteUnicefRequest(Integer unicefRequestId) {
+		return db.deleteUnicefRequest(unicefRequestId);
+	}
+
+	@Override
+	public boolean updateUnicefRequest(UnicefRequest entry, Integer unicefRequestId) {
+		return db.updateUnicefRequest(entry, unicefRequestId);
+	}
+
+	@Override
+	public List<UnicefRequest> getAllUnicefRequests() {
+		return db.getAllUnicefRequests();
+	}
+
+	@Override
+	public List<UnicefRequest> getAllUnicefIncomingRequests() {
+		return db.getAllUnicefIncomingRequests();
+	}
+
+	@Override
+	public List<UnicefRequest> getAllUnicefInprogressRequests() {
+		return db.getAllUnicefInprogressRequests();
+	}
+
+	@Override
+	public List<UnicefRequest> getAllUnicefCompletedRequests() {
+		return db.getAllUnicefCompletedRequests();
+	}
+
+	@Override
+	public IncomingSMS getIncomingSMS(Integer smsId) {
+		return db.getIncomingSMS(smsId);
+	}
+
+	@Override
+	public Integer addIncomingSMS(IncomingSMS entry) {
+		return db.addIncomingSMS(entry);
 	}
 }

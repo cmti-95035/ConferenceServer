@@ -163,4 +163,10 @@ public class ServerUtils {
         String formattedDate = sdf.format(date);
         return formattedDate;
     }
+
+    public static String convertDateToString(java.sql.Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
+        String formattedDate = sdf.format(new Date(date.getTime()));
+        return formattedDate;
+    }
 }

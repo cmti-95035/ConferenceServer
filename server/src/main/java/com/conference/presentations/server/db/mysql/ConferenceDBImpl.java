@@ -1,10 +1,8 @@
 package com.conference.presentations.server.db.mysql;
 
-import com.conference.presentations.server.Conference;
-import com.conference.presentations.server.Presentation;
-import com.conference.presentations.server.ResearchField;
-import com.conference.presentations.server.User;
+import com.conference.presentations.server.*;
 import com.conference.presentations.server.db.ConferenceDB;
+import com.conference.presentations.server.impl.ServerUtils;
 import com.linkedin.data.template.GetMode;
 import com.linkedin.data.template.IntegerArray;
 import com.linkedin.data.template.SetMode;
@@ -865,5 +863,390 @@ public class ConferenceDBImpl implements ConferenceDB {
         }
 
         return presentations;
+    }
+
+    @Override
+    public UnicefRequest getUnicefRequest(Integer unicefRequestId) {
+        PreparedStatement selectUnicefRequest = null;
+        String methodName = "getAllUnicefRequests";
+
+        String selectString = "select * from UNICEF_REQUEST where requestId=?;";
+
+        try {
+            selectUnicefRequest = conn.prepareStatement(selectString);
+
+            selectUnicefRequest.setInt(1, unicefRequestId);
+            ResultSet rs = selectUnicefRequest.executeQuery();
+            if(rs.first()) {
+
+                return new UnicefRequest().setRequestId(rs.getInt("requestId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setDetail(rs.getString("details"), SetMode.IGNORE_NULL)
+                        .setIdentifier(rs.getString("identifier"))
+                        .setLatitude(rs.getDouble("latitude"), SetMode.IGNORE_NULL)
+                        .setLongitute(rs.getDouble("longitude"), SetMode.IGNORE_NULL)
+                        .setLastUpdated(ServerUtils.convertDateToString(rs.getDate("lastupdatetime")))
+                        .setStatus(RequestState.valueOf(rs.getString("status").toUpperCase()));
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectUnicefRequest != null) {
+                    selectUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Integer addUnicefRequest(UnicefRequest entry) {
+        PreparedStatement insertUnicefRequest = null;
+        String methodName = "addUnicefRequest";
+
+        String insertString = "insert into UNICEF_REQUEST (name, identifier, details, latitude, longitude, status, lastupdatetime) values (?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            insertUnicefRequest = conn.prepareStatement(insertString);
+
+            insertUnicefRequest.setNString(1, entry.getName());
+            insertUnicefRequest.setNString(2, entry.getIdentifier(GetMode.NULL));
+            insertUnicefRequest.setNString(3, entry.getDetail());
+            insertUnicefRequest.setDouble(4, entry.hasLatitude() ? entry.getLatitude() : 0.0);
+//            insertUnicefRequest.setDouble(4, entry.getLatitude(GetMode.NULL));
+            insertUnicefRequest.setDouble(5, entry.hasLongitute() ? entry.getLongitute() : 0.0);
+//            insertUnicefRequest.setDouble(5, entry.getLongitute(GetMode.NULL));
+            insertUnicefRequest.setNString(6, entry.getStatus().toString().toLowerCase());
+            insertUnicefRequest.setLong(7, new Date().getTime());
+            insertUnicefRequest.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_LAST_ID);
+            ResultSet rs = selectLastId.executeQuery();
+            while (rs.next()) {
+                Integer requestId = rs.getInt(1);
+                return requestId;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (insertUnicefRequest != null) {
+                    insertUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean deleteUnicefRequest(Integer unicefRequestId) {
+        PreparedStatement deleteUnicefRequest = null;
+        String methodName = "deleteUnicefRequest";
+
+        String deleteString = "delete from UNICEF_REQUEST where unicefRequestId = ?";
+
+        try {
+            deleteUnicefRequest = conn.prepareStatement(deleteString);
+
+            deleteUnicefRequest.setInt(1, unicefRequestId);
+            deleteUnicefRequest.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_ROW_COUNT);
+            ResultSet rs = selectLastId.executeQuery();
+            if (rs.first() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + "  deleteUser Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (deleteUnicefRequest != null) {
+                    deleteUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean updateUnicefRequest(UnicefRequest entry, Integer unicefRequestId) {
+        PreparedStatement updateUnicefRequest = null;
+        String methodName = "updateUnicefRequest";
+
+        String updateString = "update UNICEF_REQUEST set name=?, identifier=?, details=?, latitude=?, longitude=?, status=?, lastupdatetime=? where requestId=?;";
+
+        try {
+            updateUnicefRequest = conn.prepareStatement(updateString);
+
+            updateUnicefRequest.setNString(1, entry.getName());
+            updateUnicefRequest.setNString(2, entry.getIdentifier(GetMode.NULL));
+            updateUnicefRequest.setNString(3, entry.getDetail());
+            updateUnicefRequest.setDouble(4, entry.getLatitude(GetMode.NULL));
+            updateUnicefRequest.setDouble(5, entry.getLongitute(GetMode.NULL));
+            updateUnicefRequest.setNString(6, entry.getStatus().toString().toLowerCase());
+            updateUnicefRequest.setLong(7, new Date().getTime());
+            updateUnicefRequest.setInt(8, unicefRequestId);
+            updateUnicefRequest.executeUpdate();
+            PreparedStatement selectLastId = conn.prepareStatement(SELECT_ROW_COUNT);
+            ResultSet rs = selectLastId.executeQuery();
+            if (rs.first() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                if (updateUnicefRequest != null) {
+                    updateUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<UnicefRequest> getAllUnicefRequests() {
+        PreparedStatement selectUnicefRequest = null;
+        String methodName = "getAllUnicefRequests";
+
+        List<UnicefRequest> unicefRequests = new ArrayList<>();
+        String selectString = "select * from UNICEF_REQUEST order by lastupdatetime desc;";
+
+        try {
+            selectUnicefRequest = conn.prepareStatement(selectString);
+
+            ResultSet rs = selectUnicefRequest.executeQuery();
+            while(rs.next()) {
+                UnicefRequest unicefRequest = new UnicefRequest();
+
+                unicefRequest.setRequestId(rs.getInt("requestId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setDetail(rs.getString("details"), SetMode.IGNORE_NULL)
+                        .setIdentifier(rs.getString("identifier"))
+                        .setLatitude(rs.getDouble("latitude"), SetMode.IGNORE_NULL)
+                        .setLongitute(rs.getDouble("longitude"), SetMode.IGNORE_NULL)
+                        .setLastUpdated(ServerUtils.convertDateToString(rs.getDate("lastupdatetime")))
+                        .setStatus(RequestState.valueOf(rs.getString("status").toUpperCase()));
+
+                unicefRequests.add(unicefRequest);
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectUnicefRequest != null) {
+                    selectUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return unicefRequests;
+    }
+
+    @Override
+    public List<UnicefRequest> getAllUnicefIncomingRequests() {
+        PreparedStatement selectUnicefRequest = null;
+        String methodName = "getAllUnicefIncomingRequests";
+
+        List<UnicefRequest> unicefRequests = new ArrayList<>();
+        String selectString = "select * from UNICEF_REQUEST where status = 'incoming' order by lastupdatetime desc;";
+
+        try {
+            selectUnicefRequest = conn.prepareStatement(selectString);
+
+            ResultSet rs = selectUnicefRequest.executeQuery();
+            while(rs.next()) {
+                UnicefRequest unicefRequest = new UnicefRequest();
+
+                unicefRequest.setRequestId(rs.getInt("requestId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setDetail(rs.getString("details"), SetMode.IGNORE_NULL)
+                        .setIdentifier(rs.getString("identifier"))
+                        .setLatitude(rs.getDouble("latitude"), SetMode.IGNORE_NULL)
+                        .setLongitute(rs.getDouble("longitude"), SetMode.IGNORE_NULL)
+                        .setLastUpdated(ServerUtils.convertDateToString(rs.getDate("lastupdatetime")))
+                        .setStatus(RequestState.valueOf(rs.getString("status").toUpperCase()));
+
+                unicefRequests.add(unicefRequest);
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectUnicefRequest != null) {
+                    selectUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return unicefRequests;
+    }
+
+    @Override
+    public List<UnicefRequest> getAllUnicefInprogressRequests() {
+        PreparedStatement selectUnicefRequest = null;
+        String methodName = "getAllUnicefInprogressRequests";
+
+        List<UnicefRequest> unicefRequests = new ArrayList<>();
+        String selectString = "select * from UNICEF_REQUEST where status = 'inprogress' order by lastupdatetime desc;";
+
+        try {
+            selectUnicefRequest = conn.prepareStatement(selectString);
+
+            ResultSet rs = selectUnicefRequest.executeQuery();
+            while(rs.next()) {
+                UnicefRequest unicefRequest = new UnicefRequest();
+
+                unicefRequest.setRequestId(rs.getInt("requestId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setDetail(rs.getString("details"), SetMode.IGNORE_NULL)
+                        .setIdentifier(rs.getString("identifier"))
+                        .setLatitude(rs.getDouble("latitude"), SetMode.IGNORE_NULL)
+                        .setLongitute(rs.getDouble("longitude"), SetMode.IGNORE_NULL)
+                        .setLastUpdated(ServerUtils.convertDateToString(rs.getDate("lastupdatetime")))
+                        .setStatus(RequestState.valueOf(rs.getString("status").toUpperCase()));
+
+                unicefRequests.add(unicefRequest);
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectUnicefRequest != null) {
+                    selectUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return unicefRequests;
+    }
+
+    @Override
+    public List<UnicefRequest> getAllUnicefCompletedRequests() {
+        PreparedStatement selectUnicefRequest = null;
+        String methodName = "getAllUnicefCompletedRequests";
+
+        List<UnicefRequest> unicefRequests = new ArrayList<>();
+        String selectString = "select * from UNICEF_REQUEST where status = 'complete' order by lastupdatetime desc;";
+
+        try {
+            selectUnicefRequest = conn.prepareStatement(selectString);
+
+            ResultSet rs = selectUnicefRequest.executeQuery();
+            while(rs.next()) {
+                UnicefRequest unicefRequest = new UnicefRequest();
+
+                unicefRequest.setRequestId(rs.getInt("requestId"))
+                        .setName(rs.getString("name"), SetMode.IGNORE_NULL)
+                        .setDetail(rs.getString("details"), SetMode.IGNORE_NULL)
+                        .setIdentifier(rs.getString("identifier"))
+                        .setLatitude(rs.getDouble("latitude"), SetMode.IGNORE_NULL)
+                        .setLongitute(rs.getDouble("longitude"), SetMode.IGNORE_NULL)
+                        .setLastUpdated(ServerUtils.convertDateToString(rs.getDate("lastupdatetime")))
+                        .setStatus(RequestState.valueOf(rs.getString("status").toUpperCase()));
+
+                unicefRequests.add(unicefRequest);
+            }
+        } catch (SQLException ex) {
+            _log.error(methodName + " SQLException: " + ex.getMessage());
+            _log.error(methodName + " SQLState: " + ex.getSQLState());
+            _log.error(methodName + " VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            _log.error(methodName + " Encountered exception: " + ex.getMessage());
+            DBUtilities.printStackTrace(_log, ex.getStackTrace());
+        } finally {
+            try {
+                if (selectUnicefRequest != null) {
+                    selectUnicefRequest.close();
+                }
+            } catch (SQLException ex) {
+                _log.error(methodName + " SQLException: " + ex.getMessage());
+                _log.error(methodName + " SQLState: " + ex.getSQLState());
+                _log.error(methodName + " VendorError: " + ex.getErrorCode());
+            }
+        }
+
+        return unicefRequests;
+    }
+
+    @Override
+    public IncomingSMS getIncomingSMS(Integer smsId) {
+        return null;
+    }
+
+    @Override
+    public Integer addIncomingSMS(IncomingSMS entry) {
+        _log.error("incoming values: " + entry.getValues(GetMode.NULL));
+
+        return 1;
     }
 }

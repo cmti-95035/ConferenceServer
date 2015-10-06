@@ -58,3 +58,26 @@ CREATE TABLE presentation (
 )AUTO_INCREMENT=1000
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE UNICEF_REQUEST (
+  `requestId` int(4) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50),
+  `identifier` VARCHAR(50),
+  `details` VARCHAR(200),
+  `latitude` double,
+  `longitute` double,
+  `status` enum('incoming','inprogress','complete') NOT NULL,
+  `lastupdatetime` bigint,
+  PRIMARY KEY(`requestId`)
+)AUTO_INCREMENT=1000
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE INCOMINGSMS (
+  `smsId` int(4) NOT NULL AUTO_INCREMENT,
+  `values` VARCHAR(1000),
+  `lastupdatetime` bigint,
+  PRIMARY KEY(`smsId`)
+)AUTO_INCREMENT=1000
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;

@@ -63,80 +63,102 @@ public class RestLiClient {
 
         // Create a RestClient to talk to the specified server IP:port
         RestClient restClient = new RestClient(r2Client, "http://localhost:7777/");
+//
+//        ResearchFieldArray fieldArray = getAllFields(restClient);
+//        for(ResearchField researchField : fieldArray){
+//            System.out.println("\ngetAllFields returns:" + researchField);
+//        }
+//        IntegerArray integers = new IntegerArray();
+//        integers.add(1);
+//        integers.add(5);
+//        String email = String.valueOf(random.nextInt()) + "@EmaiL.Com";
+//        Integer userId = createUser(restClient, email, String.valueOf(random.nextInt()), "abc", String.valueOf(random.nextInt()), "USA", String.valueOf(random.nextInt()), integers);
+//
+//        User user = getUser(restClient, userId);
+//        System.out.println("\ngetUser via id returns:" + user);
+//
+//        user.setPassword("xyz");
+//        updateUser(restClient, user, userId);
+//
+//        User user2 = getUserProfile(restClient, email.toUpperCase());
+//        System.out.println("\ngetUser via email returns:" + user2);
+//
+//        UserArray userArray = getAllUsers(restClient);
+//        for(User u : userArray){
+//            System.out.println("\ngetAllUsers returns:" + u);
+//        }
+////        deleteUser(restClient, userId);
+//
+//        Conference conference = new Conference()
+//                .setConferenceTime("12/23/2014-12/27/2014")
+//                .setVenue("Boston")
+//                .setName("ACS Material Science Conference")
+//                .setEmails("abc@gmail.com,xyz@yahoo.com")
+//                .setOrganizer("ACS")
+//                .setFields(integers);
+//        Integer conferenceId = createConference(restClient, conference);
+//
+//        conference = getConference(restClient, conferenceId);
+//        System.out.println("\nget conference: " + conference);
+//        conference.setWebsite("www.acs.org");
+//
+//        updateConference(restClient, conference, conferenceId);
+//
+//        Conference newConference = getConference(restClient, conferenceId);
+//
+//        System.out.println("\nget conference: " + newConference);
+//
+//        ConferenceArray conferenceArray = getAllConferences(restClient);
+//        for(Conference c : conferenceArray){
+//            System.out.println("getAllConferences returns : " + c);
+//        }
+//
+//        Presentation presentation = new Presentation()
+//                .setAbs("first presentation")
+//                .setAuthors("abc;xyz")
+//                .setConference(newConference)
+//                .setTitle("best practice")
+//                .setIsPrivate(false)
+//                .setUser(user);
+//
+//        Integer presentationId = createPresentation(restClient, presentation);
+//
+//        presentation = getPresentation(restClient, presentationId);
+//        System.out.println("\ngetPresentation returns: " + presentation);
+//
+//        presentation.setFileName("report.pdf");
+//        updatePresentation(restClient, presentation, presentationId);
+//
+//        Presentation newPresentation = getPresentation(restClient, presentationId);
+//        System.out.println("\nafter update it returns: " + newPresentation);
+//
+//        PresentationArray presentationArray = getAllPresentations(restClient);
+//        for(Presentation p : presentationArray){
+//            System.out.println("getAllPresentations returns : " + p);
+//        }
 
-        ResearchFieldArray fieldArray = getAllFields(restClient);
-        for(ResearchField researchField : fieldArray){
-            System.out.println("\ngetAllFields returns:" + researchField);
+        UnicefRequest unicefRequest = new UnicefRequest()
+                .setName("Jason")
+                .setDetail("Needs Vaccine")
+                .setIdentifier("4089999999")
+                .setStatus(RequestState.INCOMING);
+
+        Integer requestId = createUnicefRequest(restClient, unicefRequest);
+
+        UnicefRequest unicefRequest2 = getUnicefRequest(restClient, requestId);
+        System.out.println("\n getUnicefRequest returns: " + unicefRequest2);
+
+        unicefRequest2.setLatitude(36.11947);
+        unicefRequest2.setLongitute(-115.160692);
+        updateUnicefRequest(restClient, unicefRequest2, requestId);
+
+        unicefRequest2 = getUnicefRequest(restClient, requestId);
+        System.out.println("\n after update getUnicefRequest returns: " + unicefRequest2);
+
+        UnicefRequestArray unicefRequestArray = getAllUnicefRequests(restClient);
+        for(UnicefRequest u : unicefRequestArray){
+            System.out.println("\ngetAllUnicefRequests returns: " + u);
         }
-        IntegerArray integers = new IntegerArray();
-        integers.add(1);
-        integers.add(5);
-        String email = String.valueOf(random.nextInt()) + "@EmaiL.Com";
-        Integer userId = createUser(restClient, email, String.valueOf(random.nextInt()), "abc", String.valueOf(random.nextInt()), "USA", String.valueOf(random.nextInt()), integers);
-
-        User user = getUser(restClient, userId);
-        System.out.println("\ngetUser via id returns:" + user);
-
-        user.setPassword("xyz");
-        updateUser(restClient, user, userId);
-
-        User user2 = getUserProfile(restClient, email.toUpperCase());
-        System.out.println("\ngetUser via email returns:" + user2);
-
-        UserArray userArray = getAllUsers(restClient);
-        for(User u : userArray){
-            System.out.println("\ngetAllUsers returns:" + u);
-        }
-//        deleteUser(restClient, userId);
-
-        Conference conference = new Conference()
-                .setConferenceTime("12/23/2014-12/27/2014")
-                .setVenue("Boston")
-                .setName("ACS Material Science Conference")
-                .setEmails("abc@gmail.com,xyz@yahoo.com")
-                .setOrganizer("ACS")
-                .setFields(integers);
-        Integer conferenceId = createConference(restClient, conference);
-
-        conference = getConference(restClient, conferenceId);
-        System.out.println("\nget conference: " + conference);
-        conference.setWebsite("www.acs.org");
-
-        updateConference(restClient, conference, conferenceId);
-
-        Conference newConference = getConference(restClient, conferenceId);
-
-        System.out.println("\nget conference: " + newConference);
-
-        ConferenceArray conferenceArray = getAllConferences(restClient);
-        for(Conference c : conferenceArray){
-            System.out.println("getAllConferences returns : " + c);
-        }
-
-        Presentation presentation = new Presentation()
-                .setAbs("first presentation")
-                .setAuthors("abc;xyz")
-                .setConference(newConference)
-                .setTitle("best practice")
-                .setIsPrivate(false)
-                .setUser(user);
-        
-        Integer presentationId = createPresentation(restClient, presentation);
-        
-        presentation = getPresentation(restClient, presentationId);
-        System.out.println("\ngetPresentation returns: " + presentation);
-        
-        presentation.setFileName("report.pdf");
-        updatePresentation(restClient, presentation, presentationId);
-        
-        Presentation newPresentation = getPresentation(restClient, presentationId);
-        System.out.println("\nafter update it returns: " + newPresentation);
-
-        PresentationArray presentationArray = getAllPresentations(restClient);
-        for(Presentation p : presentationArray){
-            System.out.println("getAllPresentations returns : " + p);
-        }
-
         restClient.shutdown(new FutureCallback<None>());
         http.shutdown(new FutureCallback<None>());
     }
@@ -378,6 +400,7 @@ public class RestLiClient {
         }
     }
 
+
     public static Integer createPresentation(RestClient restClient, Presentation presentation) {
         try {
             // Construct a request for the specified fortune
@@ -472,5 +495,152 @@ public class RestLiClient {
             return null;
         }
     }
+
+    public static Integer createUnicefRequest(RestClient restClient, UnicefRequest unicefRequest) {
+        try {
+            // Construct a request for the specified fortune
+            UnicefRequestCreateRequestBuilder rb = new UnicefRequestRequestBuilders().create();
+            CreateIdRequest<Integer, UnicefRequest> createReq = rb.input(unicefRequest).build();
+
+            System.out.println("\ncreate unicefRequest request: " + createReq);
+            // Send the request and wait for a response
+            final ResponseFuture<IdResponse<Integer>> getFuture = restClient.sendRequest(createReq);
+            final Response<IdResponse<Integer>> resp = getFuture.getResponse();
+
+            Integer unicefRequestId = resp.getEntity().getId();
+            // Print the response
+            System.out.println("\ncreate unicefRequest returns: " + unicefRequestId);
+            return unicefRequestId;
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+            System.out.println("\ncreate unicefRequest failed!!!!!!!!!!!!!!!!!!");
+            return null;
+        }
+    }
+
+    public static UnicefRequest getUnicefRequest(RestClient restClient, Integer unicefRequestId) {
+        GetRequest<UnicefRequest> getReq = new UnicefRequestRequestBuilders().get().id(unicefRequestId).addHeader(CONFERENCE_AUTHORIZATION_HEADER, FAKE_CONFERENCE_TOKEN).build();
+
+        System.out.println("\nget unicefRequest request: " + getReq);
+        // Send the request and wait for a response
+        final ResponseFuture<UnicefRequest> getFuture = restClient.sendRequest(getReq);
+        final Response<UnicefRequest> resp;
+        try {
+            resp = getFuture.getResponse();
+            UnicefRequest unicefRequest = resp.getEntity();
+
+            return unicefRequest;
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean updateUnicefRequest(RestClient restClient, final UnicefRequest newUnicefRequest, final Integer unicefRequestId) {
+        // Creating the profile update request builder
+        UnicefRequestUpdateRequestBuilder updateRequestBuilder = new UnicefRequestRequestBuilders().update();
+
+        UpdateRequest updateReq = updateRequestBuilder.id(unicefRequestId).input(newUnicefRequest)
+                .addHeader(CONFERENCE_AUTHORIZATION_HEADER, FAKE_CONFERENCE_TOKEN).build();
+
+        // Send the request and wait for a response
+        final ResponseFuture getFuture = restClient.sendRequest(updateReq);
+
+        // If you get an OK response, then the comment has been updated in the table
+        final Response resp;
+        try {
+            resp = getFuture.getResponse();
+            if (resp.getStatus() == HttpStatus.S_200_OK.getCode()) {
+                return true;
+            }
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+
+        }
+        return false;
+    }
+
+    public static void deleteUnicefRequest(RestClient restClient, Integer unicefRequestId) {
+        try {
+            UnicefRequestDeleteRequestBuilder rb = new UnicefRequestRequestBuilders().delete();
+            DeleteRequest<UnicefRequest> deleteRequest = rb.id(unicefRequestId).build();
+
+            final ResponseFuture<EmptyRecord> responseFuture = restClient.sendRequest(deleteRequest);
+            final Response<EmptyRecord> response = responseFuture.getResponse();
+
+            System.out.println("\ndeleteUnicefRequest returns: " + response.getStatus());
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static UnicefRequestArray getAllUnicefRequests(RestClient restClient){
+        // Construct a request for the specified fortune
+        UnicefRequestDoGetAllUnicefRequestsRequestBuilder rb = new UnicefRequestRequestBuilders().actionGetAllUnicefRequests();
+        ActionRequest<UnicefRequestArray> getReq = rb.build();
+
+        // Send the request and wait for a response
+        final ResponseFuture<UnicefRequestArray> getFuture = restClient.sendRequest(getReq);
+        final Response<UnicefRequestArray> resp;
+        try {
+            resp = getFuture.getResponse();
+            return resp.getEntity();
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static UnicefRequestArray getAllUnicefIncomingRequests(RestClient restClient){
+        // Construct a request for the specified fortune
+        UnicefRequestDoGetAllUnicefRequestsRequestBuilder rb = new UnicefRequestRequestBuilders().actionGetAllUnicefRequests();
+        ActionRequest<UnicefRequestArray> getReq = rb.build();
+
+        // Send the request and wait for a response
+        final ResponseFuture<UnicefRequestArray> getFuture = restClient.sendRequest(getReq);
+        final Response<UnicefRequestArray> resp;
+        try {
+            resp = getFuture.getResponse();
+            return resp.getEntity();
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static UnicefRequestArray getAllUnicefInprogressRequests(RestClient restClient){
+        // Construct a request for the specified fortune
+        UnicefRequestDoGetAllUnicefRequestsRequestBuilder rb = new UnicefRequestRequestBuilders().actionGetAllUnicefRequests();
+        ActionRequest<UnicefRequestArray> getReq = rb.build();
+
+        // Send the request and wait for a response
+        final ResponseFuture<UnicefRequestArray> getFuture = restClient.sendRequest(getReq);
+        final Response<UnicefRequestArray> resp;
+        try {
+            resp = getFuture.getResponse();
+            return resp.getEntity();
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static UnicefRequestArray getAllUnicefCompletedRequests(RestClient restClient){
+        // Construct a request for the specified fortune
+        UnicefRequestDoGetAllUnicefRequestsRequestBuilder rb = new UnicefRequestRequestBuilders().actionGetAllUnicefRequests();
+        ActionRequest<UnicefRequestArray> getReq = rb.build();
+
+        // Send the request and wait for a response
+        final ResponseFuture<UnicefRequestArray> getFuture = restClient.sendRequest(getReq);
+        final Response<UnicefRequestArray> resp;
+        try {
+            resp = getFuture.getResponse();
+            return resp.getEntity();
+        } catch (RemoteInvocationException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
 

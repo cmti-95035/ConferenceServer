@@ -35,6 +35,8 @@ public class IncomingSMSResource extends CollectionResourceTemplate<Integer, Inc
 
     @Override
     public CreateResponse create(IncomingSMS incomingSMS) {
+        _log.error("context of an incoming create request: " + getContext().getRawRequest());
+        _log.error("context of an incoming create request context: " + getContext().getRawRequestContext());
         // create is the first it register for a incomingSMS so meanwhile a token is not yet issued
         // don't need to check the token
 
